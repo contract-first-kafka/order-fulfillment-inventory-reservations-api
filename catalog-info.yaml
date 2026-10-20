@@ -1,0 +1,21 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: inventory-reservations
+  title: inventory-reservations
+  description: Inventory reservation contract for order fulfillment.
+  annotations:
+    contract-first-idp.github.io/scm-provider: github
+    contract-first-idp.github.io/scm-host: github.com
+    contract-first-idp.github.io/domain-org: contract-first-kafka
+    contract-first-idp.github.io/domain-repo: demo-domain
+    contract-first-idp.github.io/repository-name: order-fulfillment-inventory-reservations-api
+    contract-first-idp.github.io/schema-registry-group-id: io.github.contractfirstkafka.demo.orderfulfillment
+    contract-first-idp.github.io/schema-registry-artifact-id: inventory-reservations
+spec:
+  type: asyncapi
+  lifecycle: production
+  owner: group:default/domain-maintainers
+  system: system:default/order-fulfillment
+  definition:
+    $text: ./specification.yaml

@@ -1,0 +1,93 @@
+asyncapi: 3.1.0
+info:
+  title: Inventory reservation events
+  version: 1.0.0
+  description: Inventory reservations made for orders awaiting fulfillment.
+  contact:
+    name: Demo domain maintainers
+  license:
+    name: Apache-2.0
+defaultContentType: application/json
+servers:
+  kafka:
+    host: kafka.example.invalid:9092
+    protocol: kafka
+    description: Client deployment supplies the Kafka broker; this contract does not
+      provision it.
+    bindings:
+      kafka:
+        schemaRegistryUrl: https://apicurio.apps.cluster-ggvsm.dyn.redhatworkshops.io/apis/registry/v3
+        schemaRegistryVendor: apicurio
+        bindingVersion: 0.5.0
+channels:
+  reservations:
+    address: demo.inventory.reservations
+    servers:
+    - $ref: '#/servers/kafka'
+    messages:
+      reserved:
+        $ref: '#/components/messages/InventoryReserved'
+operations:
+  receiveReservations:
+    action: receive
+    channel:
+      $ref: '#/channels/reservations'
+    messages:
+    - $ref: '#/channels/reservations/messages/reserved'
+components:
+  schemas:
+    CloudEventHeaders:
+      type: object
+      required:
+      - ce_specversion
+      - ce_id
+      - ce_source
+      - ce_type
+      properties:
+        ce_specversion:
+          type: string
+          const: '1.0'
+        ce_id:
+          type: string
+        ce_source:
+          type: string
+        ce_type:
+          type: string
+  messages:
+    InventoryReserved:
+      name: InventoryReserved
+      title: Inventory reserved for an order
+      summary: Stock has been reserved for an order awaiting fulfillment.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/CloudEventHeaders'
+      payload:
+        schemaFormat: application/schema+json;version=draft-07
+        schema:
+          $schema: http://json-schema.org/draft-07/schema#
+          title: InventoryReserved
+          type: object
+          required:
+          - orderId
+          - sku
+          - quantity
+          properties:
+            orderId:
+              type: string
+            sku:
+              type: string
+            quantity:
+              type: integer
+              minimum: 1
+          additionalProperties: false
+      examples:
+      - name: ReservedStock
+        headers:
+          ce_specversion: '1.0'
+          ce_id: reservation-001
+          ce_source: /inventory
+          ce_type: demo.inventory.reserved
+        payload:
+          orderId: order-1001
+          sku: widget-blue
+          quantity: 2
