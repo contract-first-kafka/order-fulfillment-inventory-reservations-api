@@ -57,7 +57,7 @@ components:
     InventoryReserved:
       name: InventoryReserved
       title: Inventory reserved for an order
-      summary: Stock has been reserved for an order awaiting fulfillment.
+      summary: Inventory reservation confirmed for fulfillment planning.
       contentType: application/json
       headers:
         $ref: '#/components/schemas/CloudEventHeaders'
@@ -79,6 +79,9 @@ components:
             quantity:
               type: integer
               minimum: 1
+            warehouseId:
+              type: string
+              description: Warehouse holding the reserved stock.
           additionalProperties: false
       examples:
       - name: ReservedStock
@@ -91,3 +94,4 @@ components:
           orderId: order-1001
           sku: widget-blue
           quantity: 2
+          warehouseId: chicago-01
